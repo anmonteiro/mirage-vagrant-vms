@@ -6,14 +6,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "ubuntu-14.04-xen"
 
-  # config.vm.network :forwarded_port, guest: 80, host: 8080
-  # config.vm.network :private_network, ip: "192.168.77.2"
-
-  # config.vm.synced_folder "/tmp/mirage-vagrant-vms", "/host", type: "nfs"
+  # define a custom network, then put nic in promiscuous mode to ensure  it
+  # can be accessed from host
+  config.vm.network :private_network, ip: "192.168.77.2"
+  
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   config.vm.provider :virtualbox do |vb|
     vb.gui = false
+    # enable promiscuous mode on the private network
+    vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
   end
 
   config.vm.provision "shell", path: "../scripts/packages.sh"
