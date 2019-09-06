@@ -13,26 +13,19 @@ EOF
 echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
 sysctl -p /etc/sysctl.conf
 
-# set eth1 in manual mode
-cat  > /tmp/update-eth1 <<EOF
-s/iface eth1 inet static/iface eth1 inet manual/
-/address 192.168.77.2/d
-/netmask 255.255.255.0/d
+DISTRO=$(cut -f 1 -d ' ' -s /etc/issue)
+INTF=$(ifconfig -a | sed 's/[ \t:].*//;/^\(lo\|\)$/d' | head -n2 | tail -1)
+
+cat >> /etc/network/interfaces <<EOF
+auto xenbr0
+iface xenbr0 inet dhcp
+  bridge_ports $INTF
 EOF
 
-sed -i"" -f /tmp/update-eth1 /etc/network/interfaces
-
-# setup bridge br0 interface 
-cat  >> /etc/network/interfaces <<EOF
-auto br0
-iface br0 inet static
-    bridge_ports eth1
-    address 192.168.77.2
-    broadcast 192.168.77.255
-    netmask 255.255.255.0
-EOF
+# if [ "$DISTRO" = "Debian" ] ; then
+# else
+# fi
 
 # stop eth1 then activate both interfaces
-ifdown eth1
-ifup br0
-
+ifdown $INTF
+ifup xenbr0

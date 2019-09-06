@@ -4,11 +4,12 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "ubuntu-14.04-xen"
+  config.vm.box = "debian-9.6.0-xen"
 
   # define a custom network, then put nic in promiscuous mode to ensure  it
   # can be accessed from host
   config.vm.network :private_network, type: "dhcp"
+  #, auto_config: false
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
@@ -26,5 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "../scripts/finish.sh"
 
 
+  config.vm.synced_folder "/Users/anmonteiro/Documents/github/mirage-platform", "/home/vagrant/mirage-platform", type:"rsync"
   config.vm.synced_folder "/Users/anmonteiro/Documents/github/mirageplay/httpaf", "/app", type:"rsync"
+  config.vm.synced_folder "/Users/anmonteiro/Documents/github/ocaml-h2", "/app", type:"rsync"
 end

@@ -9,10 +9,6 @@ if [ -f .vbox_version ] ; then
   fi
 
   rmmod vboxguest || true
-  aptitude -y purge                             \
-           virtualbox-ose-guest-x11             \
-           virtualbox-ose-guest-dkms            \
-           virtualbox-ose-guest-utils
 
   apt-get install -y dkms                                # for dynamic compiles
   apt-get -y install --no-install-recommends libdbus-1-3 # reqd for autostart
@@ -24,5 +20,5 @@ if [ -f .vbox_version ] ; then
   rm -f VBoxGuestAdditions.iso
 
   # Start the newly build driver
-  /etc/init.d/vboxadd start
+  # /etc/init.d/vboxadd start
 fi
